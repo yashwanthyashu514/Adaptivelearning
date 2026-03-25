@@ -10,6 +10,7 @@ const VideoLearningSection = ({ externalTopic, serverVideoId, mode }) => {
 
   const isKids = mode === 'Kids Mode';
   const isAdult = mode === 'Adult Mode';
+  const isADHD = mode === 'ADHD Mode';
 
   // Sync with external topic or server-side ID
   useEffect(() => {
@@ -48,6 +49,7 @@ const VideoLearningSection = ({ externalTopic, serverVideoId, mode }) => {
     let suffix = 'educational lecture explanation';
     if (isKids) suffix = 'animated educational story';
     if (isAdult) suffix = 'professional technical briefing documentary';
+    if (isADHD) suffix = 'high focus educational breakdown fast paced';
 
     const query = encodeURIComponent(`${searchTopic.trim()} ${suffix}`);
     const finalUrl = `https://www.youtube.com/embed?listType=search&list=${query}&autoplay=0&rel=0`;
@@ -58,23 +60,30 @@ const VideoLearningSection = ({ externalTopic, serverVideoId, mode }) => {
     }, 800);
   };
 
-  const currentStyles = isKids ? kidsStyles : (isAdult ? adultThemeStyles : studentStyles);
+  const getTheme = () => {
+    if (isKids) return kidsStyles;
+    if (isAdult) return adultThemeStyles;
+    if (isADHD) return adhdThemeStyles;
+    return studentStyles;
+  };
+
+  const currentStyles = getTheme();
 
   return (
     <div style={currentStyles.page}>
       {/* Search Header */}
       <div style={currentStyles.card}>
         <h2 style={currentStyles.title}>
-           {isKids ? '📖 Your Fun Story' : (isAdult ? '📚 Professional Study Video' : '🎓 Supplemental Learning')}
+           {isKids ? '📖 Your Fun Story' : (isAdult ? '📚 Professional Study Video' : (isADHD ? '🚀 High-Focus Dashboard' : '🎓 Supplemental Learning'))}
         </h2>
         <p style={currentStyles.subtitle}>
-           {isKids ? 'Easy to read and full of surprises!' : (isAdult ? 'High-signal technical briefings and in-depth analysis.' : 'Focused video lectures and conceptual deep-dives.')}
+           {isKids ? 'Easy to read and full of surprises!' : (isAdult ? 'High-signal technical briefings and in-depth analysis.' : (isADHD ? 'Minimized distractions for maximum cognitive engagement.' : 'Focused video lectures and conceptual deep-dives.'))}
         </p>
         
         <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} style={currentStyles.searchForm}>
           <input 
             style={currentStyles.input} 
-            placeholder={isKids ? "What story should we find today?" : "Search for a specific study topic..."} 
+            placeholder={isKids ? "What story should we find today?" : "Quickly search for a focus topic..."} 
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
           />
@@ -88,7 +97,7 @@ const VideoLearningSection = ({ externalTopic, serverVideoId, mode }) => {
         <div style={currentStyles.contentLayout}>
           {/* Left Block: Video Section */}
           <div style={currentStyles.videoBlock}>
-            <div style={currentStyles.videoHeader}>📺 {isKids ? 'Story Time' : 'Study Resource'}: {topic}</div>
+            <div style={currentStyles.videoHeader}>📺 {isKids ? 'Story Time' : 'Deep Focus Area'}: {topic}</div>
             <div style={currentStyles.videoWrapper}>
               <iframe 
                 src={videoUrl} 
@@ -102,12 +111,12 @@ const VideoLearningSection = ({ externalTopic, serverVideoId, mode }) => {
           {/* Right Block: Notes Section */}
           <div style={currentStyles.notesBlock}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-              <h3 style={currentStyles.notesTitle}>📝 {isKids ? 'My Story Discoveries' : 'Active Study Notes'}</h3>
+              <h3 style={currentStyles.notesTitle}>📝 {isKids ? 'My Story Discoveries' : 'Hyper-Focus Journal'}</h3>
               {isSaved && <span style={currentStyles.saveBadge}>✓ Saved</span>}
             </div>
             <textarea 
               style={currentStyles.textarea} 
-              placeholder={isKids ? "What surprises did you find?" : "Document key takeaways and strategic insights..."}
+              placeholder={isKids ? "What surprises did you find?" : "Log key takeaways and immediate conceptual triggers..."}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
             />
@@ -163,6 +172,14 @@ const adultThemeStyles = {
   card: { ...studentStyles.card, borderLeft: '8px solid #64748b' },
   videoHeader: { ...studentStyles.videoHeader, color: '#94a3b8' },
   button: { ...studentStyles.button, backgroundColor: '#64748b', boxShadow: '0 4px 15px rgba(100, 116, 139, 0.3)' },
+};
+
+const adhdThemeStyles = {
+  ...studentStyles,
+  card: { ...studentStyles.card, borderLeft: '8px solid #f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.05)' },
+  videoHeader: { ...studentStyles.videoHeader, color: '#f59e0b' },
+  button: { ...studentStyles.button, backgroundColor: '#f59e0b', boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)' },
+  notesBlock: { ...studentStyles.notesBlock, border: '1px solid rgba(245, 158, 11, 0.3)' },
 };
 
 export default VideoLearningSection;
